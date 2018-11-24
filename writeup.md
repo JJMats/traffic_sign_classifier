@@ -22,11 +22,12 @@ The goals / steps of this project are the following:
 [image1]: ./output_images/training_data_hist.png "Training Data Label Frequency"
 [image2]: ./examples/grayscale.jpg "Grayscaling"
 [image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[image4]: ./test_images/100kph_32x32.png "100 kph"
+[image5]: ./test_images/double_curve_32x32.png "Double Curve"
+[image6]: ./test_images/general_caution_32x32.png "General Caution"
+[image7]: ./test_images/roundabout_mandatory_32x32.png "Roundabout Mandatory"
+[image8]: ./test_images/turn_right_ahead_32x32.png "Turn Right Ahead"
+[image9]: ./test_images/yield_32x32.png "Yield"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -54,7 +55,7 @@ signs data set:
 
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data is not evenly distributed for each label. There are some labels that contain
+Here is an exploratory visualization of the data set. It is a bar chart showing how the data is not evenly distributed for each label. There are some labels that contain up to 1604 images, and others that only contain 141 images.
 
 ![alt text][image1]
 
@@ -88,12 +89,21 @@ My final model consisted of the following layers:
 | Layer         		|     Description	        					| 
 |:---------------------:|:---------------------------------------------:| 
 | Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 28x28x6 	|
 | RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
+| Max pooling	      	| 2x2 stride, valid padding, outputs 14x14x6 	|
+| Convolution 5x5	    | 1x1 stride, valid padding, outputs 10x10x16 	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride, valid padding, outputs 5x5x16 	|
+| Flatten				| 5x5x15 input, outputs 400 (one-dimensional) 	|
+| Fully connected		| Input 400, outputs 120 						|
+| RELU 					|												|
+| Dropout 				| Drop 50% 										|
+| Fully connected		| Input 120, outputs 84 						|
+| RELU 					|												|
+| Dropout 				| Drop 50% 										|
+| Fully connected		| Input 84, outputs 43 							|
+| Softmax				|												|
 |						|												|
 |						|												|
  
@@ -101,7 +111,7 @@ My final model consisted of the following layers:
 
 #### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-To train the model, I used an ....
+To train the model, I used an Adam Optimizer. I chose a batch size of 128 items, an epoch count of 100, a learning rate of 0.0002, and a dropout of 50.0%.
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
@@ -121,16 +131,18 @@ If a well known architecture was chosen:
 * What architecture was chosen?
 * Why did you believe it would be relevant to the traffic sign application?
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+
+I chose to utilize the LeNet architecture
  
 
 ### Test a Model on New Images
 
 #### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are five German traffic signs that I found on the web:
+Here are six German traffic signs that I found on the web:
 
 ![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][image7] ![alt text][image8] ![alt text][image9]
 
 The first image might be difficult to classify because ...
 
