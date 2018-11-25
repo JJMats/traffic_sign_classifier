@@ -132,7 +132,13 @@ If a well known architecture was chosen:
 * Why did you believe it would be relevant to the traffic sign application?
 * How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
 
-I chose to utilize the LeNet architecture
+
+
+I chose to utilize the LeNet-5 architecture because it has been proven to perform well in alphabetic character and numeric character recognition. I believe that it is relevant to the traffic sign classifier application because the traffic signs typically contain these forms of identifying marks.
+
+The final model's 99% validation accuracy on each of the data sets are indicative of a model that should generalize relatively well. There are improvements that can still be made to improve the model's performance on new test cases, but 
+
+
  
 
 ### Test a Model on New Images
@@ -152,12 +158,12 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
-
+| 100 kph      			| Stop sign   									| 
+| Double Curve   		| U-turn 										|
+| General Caution		| Yield											|
+| Roundabout Mandatory	| Bumpy Road					 				|
+| Turn Right Ahead		| Slippery Road      							|
+| Yield					| Slippery Road      							|
 
 The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
 
