@@ -140,7 +140,7 @@ If a well known architecture was chosen:
 
 
 
-I chose to utilize the LeNet-5 architecture because it has been proven to perform well in alphabetic character and numeric character recognition. I believe that it is relevant to the traffic sign classifier application because the traffic signs typically contain these forms of identifying marks.
+I chose to utilize the LeNet-5 architecture because it has been proven to perform well in alpha-numeric character recognition. I believe that it is relevant to the traffic sign classifier application because the traffic signs typically contain these forms of identifying marks.
 
 The final model's 99% validation accuracy on each of the data sets are indicative of a model that should generalize relatively well. There are improvements that can still be made to improve the model's performance on new test cases, but 
 
