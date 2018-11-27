@@ -13730,13 +13730,13 @@ New training set shape: (69598, 32, 32, 3), Label Count: 69598
     <span class="n">scaled_images</span> <span class="o">=</span> <span class="p">[]</span>
     
     <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">image_data</span><span class="p">:</span>    
-        <span class="c1"># transform limits</span>
+        <span class="c1"># Define Transform Limits</span>
         <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 
-        <span class="c1"># ending locations</span>
+        <span class="c1"># Define Transform Final Locations</span>
         <span class="n">pts1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">([[</span><span class="n">px</span><span class="p">,</span><span class="n">px</span><span class="p">],[</span><span class="n">rows</span><span class="o">-</span><span class="n">px</span><span class="p">,</span><span class="n">px</span><span class="p">],[</span><span class="n">px</span><span class="p">,</span><span class="n">cols</span><span class="o">-</span><span class="n">px</span><span class="p">],[</span><span class="n">rows</span><span class="o">-</span><span class="n">px</span><span class="p">,</span><span class="n">cols</span><span class="o">-</span><span class="n">px</span><span class="p">]])</span>
 
-        <span class="c1"># starting locations (4 corners)</span>
+        <span class="c1"># Define Transform Starting locations</span>
         <span class="n">pts2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="n">rows</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="n">cols</span><span class="p">],[</span><span class="n">rows</span><span class="p">,</span><span class="n">cols</span><span class="p">]])</span>
 
         <span class="n">M</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getPerspectiveTransform</span><span class="p">(</span><span class="n">pts1</span><span class="p">,</span><span class="n">pts2</span><span class="p">)</span>
@@ -13852,7 +13852,7 @@ New training set shape: (139196, 32, 32, 3), Label Count: 139196
     <span class="n">translated_images</span> <span class="o">=</span> <span class="p">[]</span>
     
     <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">image_data</span><span class="p">:</span>    
-    <span class="c1"># Randomly translate image up to px_cnt pixels in x and y directions</span>
+        <span class="c1"># Randomly translate image up to px_cnt pixels in x and y directions</span>
         <span class="n">px_cnt</span> <span class="o">=</span> <span class="mi">3</span>
         <span class="n">dx</span><span class="p">,</span><span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="o">-</span><span class="n">px_cnt</span><span class="p">,</span><span class="n">px_cnt</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
 
