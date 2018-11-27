@@ -19,15 +19,16 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./output_images/training_data_hist.png "Training Data Label Frequency"
-[image2]: ./test_images/gray.png "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./test_images/100kph_32x32.png "100 kph"
-[image5]: ./test_images/double_curve_32x32.png "Double Curve"
-[image6]: ./test_images/general_caution_32x32.png "General Caution"
-[image7]: ./test_images/roundabout_mandatory_32x32.png "Roundabout Mandatory"
-[image8]: ./test_images/turn_right_ahead_32x32.png "Turn Right Ahead"
-[image9]: ./test_images/yield_32x32.png "Yield"
+[imageTrainingHist]: ./output_images/training_data_hist.png "Training Data Label Frequency"
+[imageGray]: ./output_images/gray.png "Grayscaled Image Example"
+[imageScaled]: ./output_images/scaled.png "Scaled Image Example"
+[imageTranslate]: ./output_images/translation.png "Translation Image Example"
+[imageWeb]: ./output_images/test_images.png "Web testing images"
+[imageWeb1]: ./test_images/double_curve_32x32.jpg "Double Curve"
+[imageWeb2]: ./test_images/general_caution_32x32.jpg "General Caution"
+[imageWeb3]: ./test_images/roundabout_mandatory_32x32.jpg "Roundabout Mandatory"
+[imageWeb4]: ./test_images/turn_right_ahead_32x32.jpg "Turn Right Ahead"
+[imageWeb5]: ./test_images/yield_32x32.jpg "Yield"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -46,18 +47,21 @@ You're reading it! and here is a link to my [project code](https://github.com/JJ
 I used the pandas library to calculate summary statistics of the traffic
 signs data set:
 
-* The size of training set is: 34,799 Images.
-    * I split the training data set 80/20 to create a new validation data set. This cut the training set down to 27,839 Images
-* The size of the validation set is: 6960 Images.
-* The size of test set is: 12,630 Images
+The initially provided data set sizes are:
+* Training Data:   34,799 Images
+* Validation Data: 6,960  Images
+* Test Data:       12,630 Images
+
+Other information about the data is:
 * The shape of a traffic sign image is: 32px x 32px x 3 Color Channels
 * The number of unique classes/labels in the data set is: 43
 
+
 #### 2. Include an exploratory visualization of the dataset.
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data is not evenly distributed for each label. There are some labels that contain up to 1604 images, and others that only contain 141 images.
+Here is an exploratory visualization of the training data set. It is a bar chart showing how the data is not evenly distributed for each label. There are major differences in quantities of each label which may induce bias in the final model towards the labels with the greater counts.
 
-![alt text][image1]
+![alt text][imageTrainingHist]
 
 ### Design and Test a Model Architecture
 
@@ -65,27 +69,27 @@ Here is an exploratory visualization of the data set. It is a bar chart showing 
 
 For my first step, I chose to convert a copy of the training set images to grayscale, and then augment them into the RGB image set. The goal here was to increase the quantity of images to train on, while promoting color channel invariance of the classification model.
 
-I then normalized all of the images in the training, testing, and validation datasets because it reduces the work that the optimizer has to do by keeping the mean of the data set near zero and a nearly equal variance about the mean.
+An example of an image before and after grayscaling is:
 
+![alt text][imageGray]
 
+I then decided to generate randomly scaled images with a 2 pixel growth/shrink constraint. This data was generated from the RGB/Grayscale augmented training dataset, and then also augmented into the training data set to assist with scale invariance.
 
-As a first step, I decided to convert the images to grayscale because ...
+An example of an image that has been scaled is:
 
-Here is an example of a traffic sign image before and after grayscaling.
+![alt text][imageScaled]
 
-![alt text][image2]
+Next, I proceeded to apply a random image translation generator to the augmented dataset that was constrained with a 3 pixel x and y directional constraint. This data was then augmented into the training data set to improve translation invariance.
 
-As a last step, I normalized the image data because ...
+An example of an image that has been translated is:
+![alt text][imageTranslate]
 
-I decided to generate additional data because ... 
+As a final step, I normalized all of the images in the training, testing, and validation datasets because it reduces the work that the optimizer has to do by keeping the mean of the data set near zero and a nearly equal variance about the mean.
 
-To add more data to the the data set, I used the following techniques because ... 
+I chose to augment the data because I believe that it will help the model generalize better, while attaining improved accuracy. As a result of these operations, the augmented training data set grew from 34,799 images to 278,392 images. This provided much more data to train the COVNET on. I did split 20% of the data into a new validation dataset, so the resulting dataset sizes were:
 
-Here is an example of an original image and an augmented image:
-
-![alt text][image3]
-
-The difference between the original data set and the augmented data set is the following ... 
+* Split Augmented Training Data Set Size: 222,713 Images
+* New Validation Data Set Size: 55,679 Images
 
 
 #### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
@@ -109,54 +113,58 @@ My final model consisted of the following layers:
 | RELU 					|												|
 | Dropout 				| Drop 50% 										|
 | Fully connected		| Input 84, outputs 43 							|
-| Softmax				|												|
-|						|												|
-|						|												|
- 
+| Softmax				| Output Probabilities							|
 
 
 #### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-To train the model, I used an Adam Optimizer. I chose a batch size of 128 items, an epoch count of 100, a learning rate of 0.0002, and a dropout of 50.0%.
+To train the model, I used an Adam Optimizer. The hyperparameters that I tuned are as follows:
+* Batch Size: 128 Objects
+* Epoch Count: 30
+* Learning Rate: 0.0005
+* Dropout Keep Probability: 50.0%
+* LeNet mu: 0
+* LeNet sigma: 0.08
+
+I chose an epoch count of 30 because of the size of the dataset and the long time duration that was required to process each epoch. Accuracy gains also flattened before the 30th epoch was reached.
+
 
 #### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* Training set accuracy of 99.1%
+* Provided validation set accuracy of 97.5%
+* Split validation set accuracy of 98.5%
+* Test set accuracy of 96.0%
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+I chose an interative approach to solve this problem, but I started with the LeNet-5 architecture. I decided to start with this base because it has been proven to perform well in object classification problems and it can be tuned to improve scaling, translation, rotation, and color invariance.
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
+The original architecture utilized two convolutional layers with RELU activation functions followed by max pooling operations, and then three fully connected layers with RELU functions. In an effort to improve the model's ability to generalize and prevent overfitting, I later added a dropout function to the fully-connected layers that did seem to help with the web image dataset classification. The code for the LeNet architecture is in code cell 20 of Traffic_Sign_Classifier.ipynb.
 
+Augmenting the training dataset also helped improve the accuracy of the model against the all of the datasets. The augmentation functions I chose to incorporate were scaling, translating, and grayscaling the images. These functions were applied to all of the images existing in the augmented training set and effectively doubled the training dataset size each time one was applied. These augmentation functions were performed in code cells 10 - 16. The data was then normalized in code cell 17, and then a second validation dataset was generated from the augmented training data in code cell 18.
 
+I ran multiple training operations while tuning various hyperparameters to improve the model's classification accuracy. I found a learning rate of 0.0005 over 30 epochs to perform fairly well. The accuracy improvement reaches a point of diminishing returns near epoch 11, so stopping training earlier may help reduce overfitting. I found that reducing the sigma value of the truncated_normal operation in the LeNet convolutional layers from 0.10 to 0.08 helped improve classification accuracy as well.
 
-I chose to utilize the LeNet-5 architecture because it has been proven to perform well in alpha-numeric character recognition. I believe that it is relevant to the traffic sign classifier application because the traffic signs typically contain these forms of identifying marks.
+For the dropout function, effort was applied in finding an optimal dropout ratio and which layers to apply it to. In my final model, I decided to only apply the dropout function to the fully-connected layers. I chose a dropout ratio of 50.0% to assist in model generalization.
 
-The final model's 99% validation accuracy on each of the data sets are indicative of a model that should generalize relatively well. There are improvements that can still be made to improve the model's performance on new test cases, but 
+My final model resulted in high accuracy in all of the provided data sets, and it achieved 80% accuracy on the web image classification. The output can be seen in code cell 24. The model may still benefit from additional augmentation and image filtering methods to reduce any potential overfitting, while improving the ability of the model to generalize.
 
-
- 
 
 ### Test a Model on New Images
 
 #### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
 
-Here are six German traffic signs that I found on the web:
+Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8] ![alt text][image9]
+![alt text][imageWeb]
 
-The first image might be difficult to classify because ...
+The first image might be difficult to classify because there are many triangular sign images with objects appearing similarly to the double curve "S."
+
+The second image may be difficult to classify because part of a square sign appears in the bottom of the image.
+
+The third and fourth images may be difficult to classify because of the inconsistency of the background image behind the sign.
+
+The fifth image may be difficult to classify because there are many triangular sign images with red borders, and the model can be tuned for rotation invariance. If this occurs, it could be possible to classify this image as one of many other triangular signs.
 
 #### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
@@ -164,31 +172,67 @@ Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| 100 kph      			| Stop sign   									| 
-| Double Curve   		| U-turn 										|
-| General Caution		| Yield											|
-| Roundabout Mandatory	| Bumpy Road					 				|
-| Turn Right Ahead		| Slippery Road      							|
-| Yield					| Slippery Road      							|
+| Double Curve   		| Beware of ice/snow 							|
+| General Caution		| General Caution 								|
+| Roundabout Mandatory	| Roundabout Mandatory 			 				|
+| Turn Right Ahead		| Turn Right Ahead     							|
+| Yield					| Yield      									|
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This is worse than the test set accuracy of 96%, but the small quantity of these test images that I fed to the classification model causes the accuracy value to be greatly affected by false positives.
 
 #### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in the 33rd cell of the Jupyter notebook.
 
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
+For the first image, the model is fairly certain that the sign is "Beware of ice/snow," although it is actually a "Double curve" sign. The top five softmax probabliities calculated were:
 
 | Probability         	|     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+| 0.76926				| Beware of ice/snow   							| 
+| 0.23069				| Children crossing 							|
+| 0.00004				| Slippery road									|
+| 0.00001				| Right-of-way at next intersection				|
+| 0.00000				| Road narrows on the right						|
 
+For the second image, the model is nearly 100% sure that this "General caution" sign is actually that. The top five softmax probabilities calculated were:
 
-For the second image ... 
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00000				| General caution   							| 
+| 0.00000				| Traffic signals 								|
+| 0.00000				| Pedestrians									|
+| 0.00000				| Speed Limit (20km/h)							|
+| 0.00000				| Speed Limit (30km/h)							|
+
+For the third image, the model is highly certain that this "Roundabout mandatory" sign is actually that. The top five softmax probabilities calculated were:
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 0.96047				| Roundabout mandatory   						| 
+| 0.03953				| Priority road 								|
+| 0.00000				| Keep right									|
+| 0.00000				| Keep left										|
+| 0.00000				| Stop											|
+
+For the fourth image, the model is nearly 100% positive that this "Turn right ahead" sign is actually that. The top five softmax probabilities calculated were:
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00000				| Turn right ahead   							| 
+| 0.00000				| Ahead only 									|
+| 0.00000				| Vehicles over 3.5 metric tons prohibited		|
+| 0.00000				| Roundabout mandatory							|
+| 0.00000				| No passing for vehicles over 3.5 metric tons	|
+
+For the final image, the model is again nearly 100% certain that this "Yield" sign is in-fact exactly that. The top five softmax probabilities calculated were:
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00000				| Yield   										| 
+| 0.00000				| Speed Limit (20km/h) 							|
+| 0.00000				| Speed Limit (30km/h)							|
+| 0.00000				| Speed Limit (50km/h)							|
+| 0.00000				| Speed Limit (60km/h)							|
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 #### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
